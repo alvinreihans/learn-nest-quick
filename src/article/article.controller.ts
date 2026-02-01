@@ -6,12 +6,12 @@ import {
   Delete,
   Param,
   Body,
-  NotFoundException,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import type { IArticle } from './interfaces/article.interface';
 import { FindOneParams } from './dto/find-one.params';
+import { UpdateArticleDto } from './dto/update-article.dto';
 
 @Controller('article')
 export class ArticleController {
@@ -24,7 +24,7 @@ export class ArticleController {
 
   @Get('/:id')
   findOne(@Param() params: FindOneParams): IArticle {
-    return this.findOneOrFail(params.id);
+    return this.articleService.findOneArticle(params.id);
   }
 
   @Post()
@@ -33,21 +33,19 @@ export class ArticleController {
   }
 
   @Put('/:id')
-  edit(@Param('id') id: string): string {
-    return `Edit artikel ${id}`;
+  edit(
+    @Param() params: FindOneParams,
+    @Body() updateArticleDto: UpdateArticleDto,
+  ): IArticle {
+    return this.articleService.updateArticleByParams(
+      params.id,
+      updateArticleDto,
+    );
   }
 
   @Delete('/:id')
-  delete(@Param('id') id: string): string {
-    return `Hapus artikel ${id}`;
-  }
-
-  private findOneOrFail(id: string): IArticle {
-    const article = this.articleService.findOneByParams(id);
-    if (!article) {
-      throw new NotFoundException();
-    }
-
-    return article;
+  delete(@Param() params: FindOneParams) {
+    this.articleService.deleteArticleByParams(params.id);
+    return { message: `Berhasil menghapus artikel ${params.id}` };
   }
 }
