@@ -11,7 +11,7 @@ import {
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import type { IArticle } from './interfaces/article.interface';
-import { FindOneParamas } from './dto/find-one.params';
+import { FindOneParams } from './dto/find-one.params';
 
 @Controller('article')
 export class ArticleController {
@@ -23,7 +23,7 @@ export class ArticleController {
   }
 
   @Get('/:id')
-  findOne(@Param() params: FindOneParamas): IArticle {
+  findOne(@Param() params: FindOneParams): IArticle {
     return this.findOneOrFail(params.id);
   }
 

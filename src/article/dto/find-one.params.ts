@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
-export class FindOneParamas {
+export class FindOneParams {
   @IsNotEmpty()
   @IsString()
   @IsUUID()
