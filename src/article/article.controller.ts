@@ -1,10 +1,23 @@
-import { Controller, Get, Post, Put, Delete, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+} from '@nestjs/common';
+import { ArticleService } from './article.service';
+import { CreateArticleDto } from './dto/create-article.dto';
+import type { IArticle } from './interfaces/article.interface';
 
 @Controller('article')
 export class ArticleController {
+  constructor(private readonly articleService: ArticleService) {}
+
   @Get()
-  findAll(): string {
-    return 'Tampilkan semua artikel';
+  findAll(): IArticle[] {
+    return this.articleService.findAllArticle();
   }
 
   @Get('/:id')
@@ -13,8 +26,8 @@ export class ArticleController {
   }
 
   @Post()
-  create(): string {
-    return 'Tambah artikel';
+  create(@Body() createArticleDto: CreateArticleDto): IArticle {
+    return this.articleService.createArticle(createArticleDto);
   }
 
   @Put('/:id')
