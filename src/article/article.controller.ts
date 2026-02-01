@@ -6,10 +6,12 @@ import {
   Delete,
   Param,
   Body,
+  NotFoundException,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import type { IArticle } from './interfaces/article.interface';
+import { FindOneParamas } from './dto/find-one.params';
 
 @Controller('article')
 export class ArticleController {
@@ -21,8 +23,8 @@ export class ArticleController {
   }
 
   @Get('/:id')
-  findOne(@Param('id') id: string): string {
-    return `Tampilkan detail artikel ${id}`;
+  findOne(@Param() params: FindOneParamas): IArticle {
+    return this.findOneOrFail(params.id);
   }
 
   @Post()
@@ -38,5 +40,14 @@ export class ArticleController {
   @Delete('/:id')
   delete(@Param('id') id: string): string {
     return `Hapus artikel ${id}`;
+  }
+
+  private findOneOrFail(id: string): IArticle {
+    const article = this.articleService.findOneByParams(id);
+    if (!article) {
+      throw new NotFoundException();
+    }
+
+    return article;
   }
 }

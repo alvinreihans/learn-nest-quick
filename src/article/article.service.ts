@@ -20,4 +20,8 @@ export class ArticleService {
   findAllArticle(): IArticle[] {
     return this.article;
   }
+
+  findOneByParams(id: string): IArticle | undefined {
+    return this.article.find((item) => item.id === id);
+  }
 }
