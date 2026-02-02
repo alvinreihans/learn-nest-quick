@@ -1,51 +1,48 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { IArticle } from './interfaces/article.interface';
 import { CreateArticleDto } from './dto/create-article.dto';
-import { randomUUID } from 'crypto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { Article } from './entities/article.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ArticleService {
   //resource
-  private article: IArticle[] = [];
+  constructor(
+    @InjectRepository(Article)
+    private ArticleRepository: Repository<Article>,
+  ) {}
 
-  private _findArticleIndex(id: string): number {
-    return this.article.findIndex((item) => item.id === id);
+  async findAllArticle(): Promise<Article[]> {
+    return await this.ArticleRepository.find();
   }
 
-  findAllArticle(): IArticle[] {
-    return this.article;
-  }
-
-  findOneArticle(id: string): IArticle {
-    const article = this.article.find((item) => item.id === id);
+  async findOneArticle(id: string): Promise<Article> {
+    const article = await this.ArticleRepository.findOne({ where: { id } });
     if (!article) {
       throw new NotFoundException();
     }
     return article;
   }
 
-  createArticle(createArticleDto: CreateArticleDto) {
-    const article: IArticle = {
-      id: randomUUID(),
-      ...createArticleDto,
-    };
-    this.article.push(article);
-    return article;
+  async createArticle(createArticleDto: CreateArticleDto): Promise<Article> {
+    const newArticle = await this.ArticleRepository.save(createArticleDto);
+    return newArticle;
   }
 
-  updateArticleByParams(
+  async updateArticleByParams(
     id: string,
     updateArticleDto: UpdateArticleDto,
-  ): IArticle {
-    return Object.assign(this.findOneArticle(id), updateArticleDto);
+  ): Promise<Article> {
+    const article = await this.findOneArticle(id);
+    const editedArticle = Object.assign(article, updateArticleDto);
+    return await this.ArticleRepository.save(editedArticle);
   }
 
-  deleteArticleByParams(id: string): void {
-    const index = this._findArticleIndex(id);
-    if (index === -1) {
+  async deleteArticleByParams(id: string): Promise<void> {
+    const article = await this.ArticleRepository.delete(id);
+    if (!article) {
       throw new NotFoundException();
     }
-    this.article.splice(index, 1);
   }
 }
