@@ -41,7 +41,7 @@ export class ArticleService {
 
   async deleteArticleByParams(id: string): Promise<void> {
     const article = await this.ArticleRepository.delete(id);
-    if (!article) {
+    if (article.affected === 0) {
       throw new NotFoundException();
     }
   }
