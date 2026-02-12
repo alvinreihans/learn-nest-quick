@@ -25,7 +25,7 @@ export class UsersController {
   async update(
     @Param() params: FindOneParams,
     @Body() updateRoleDto: UpdateRoleDto,
-  ): Promise<User> {
+  ): Promise<{ message: string }> {
     return await this.usersService.updateRoleUser(params.id, updateRoleDto);
   }
 }

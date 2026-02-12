@@ -12,7 +12,9 @@ export class UsersService {
   ) {}
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    return await this.userRepository.find({
+      select: { id: true, name: true, email: true },
+    });
   }
 
   async findOne(id: string): Promise<User> {
@@ -26,9 +28,12 @@ export class UsersService {
   async updateRoleUser(
     id: string,
     updateRoleDto: UpdateRoleDto,
-  ): Promise<User> {
+  ): Promise<{ message: string }> {
     const user = await this.findOne(id);
     Object.assign(user, updateRoleDto);
-    return await this.userRepository.save(user);
+    await this.userRepository.save(user);
+    return {
+      message: 'Update role user berhasil',
+    };
   }
 }
