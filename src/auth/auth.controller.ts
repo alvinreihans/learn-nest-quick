@@ -1,10 +1,10 @@
-import { Request } from 'express';
+import { Request as ExpressRequest } from 'express';
 import {
   Body,
   Controller,
   Get,
   Post,
-  Request as NestRequest,
+  Request,
   UseGuards,
   HttpCode,
   HttpStatus,
@@ -36,7 +36,7 @@ export class AuthController {
   @Get('getUser')
   @UseGuards(AuthGuard)
   async getUser(
-    @NestRequest() request: Request & { user?: { id: string } },
+    @Request() request: ExpressRequest & { user?: { id: string } },
   ): Promise<User | null> {
     const userId = request.user?.id;
     if (!userId) return null;
